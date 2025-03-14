@@ -4,6 +4,7 @@ import { UserData, UserStateModel } from 'models';
 import { LOCAL_USERS } from 'config/config';
 
 const loadUsersFromLocalStorage = (): UserData[] => {
+
   const users: UserData[] = [];
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
@@ -18,6 +19,7 @@ const loadUsersFromLocalStorage = (): UserData[] => {
 };
 
 const initialState: UserStateModel = {
+
   users: loadUsersFromLocalStorage(),
 };
 
@@ -25,7 +27,9 @@ const userSlice = createSlice({
   name: 'users',
   initialState,
   reducers: {
+    
     addUser: (state, action: PayloadAction<{ id: number; name: string }>) => {
+
       const { id, name } = action.payload;
       const newUser: UserData = {
         id,
@@ -36,7 +40,9 @@ const userSlice = createSlice({
       state.users.push(newUser);
       localStorage.setItem(`${LOCAL_USERS}-${id}`, JSON.stringify(newUser));
     },
+
     editUser: (state, action: PayloadAction<{ id: number; name: string }>) => {
+
       const { id, name } = action.payload;
       const editUser = state.users.find((user) => user.id === id);
       if (editUser) {
@@ -44,14 +50,19 @@ const userSlice = createSlice({
         localStorage.setItem(`${LOCAL_USERS}-${id}`, JSON.stringify(editUser));
       }
     },
+
     deleteUser: (state, action: PayloadAction<number>) => {
-      const index = state.users.findIndex((user) => user.id === action.payload);
-      if (index !== -1) {
-        const deletedUser = state.users.splice(index, 1)[0];
-        localStorage.removeItem(`${LOCAL_USERS}-${deletedUser.id}`);
+
+      const updatedUsers = state.users.filter((user)=>user.id !==action.payload);
+      if(updatedUsers.length!==state.users.length)
+      {
+        state.users=updatedUsers;
+        localStorage.removeItem(`${LOCAL_USERS}-${action.payload}`);
       }
     },
+    
     setProfilePic: (state, action: PayloadAction<{ id: number; profilePic: string }>) => {
+
       const { id, profilePic } = action.payload;
       const setUserProfilePic = state.users.find((user) => user.id === id);
       if (setUserProfilePic) {

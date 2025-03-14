@@ -1,3 +1,2 @@
-export * from './quote.model';
-export * from './user.model'
-export * from './todo.model'
+export * from './user.model';
+export * from './todo.model';
