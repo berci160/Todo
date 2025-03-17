@@ -4,7 +4,6 @@ import { UserData, UserStateModel } from 'models';
 import { LOCAL_USERS } from 'config/config';
 
 const loadUsersFromLocalStorage = (): UserData[] => {
-
   const users: UserData[] = [];
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
@@ -19,7 +18,6 @@ const loadUsersFromLocalStorage = (): UserData[] => {
 };
 
 const initialState: UserStateModel = {
-
   users: loadUsersFromLocalStorage(),
 };
 
@@ -27,42 +25,48 @@ const userSlice = createSlice({
   name: 'users',
   initialState,
   reducers: {
-    
-    addUser: (state, action: PayloadAction<{ id: number; name: string }>) => {
-
-      const { id, name } = action.payload;
+    addUser: (state, action: PayloadAction<{ id: number; name: string; profilePic: string | null }>) => {
+      const { id, name, profilePic } = action.payload;
       const newUser: UserData = {
         id,
         name,
-        profilePic: null,
+        profilePic: profilePic || null,
         todos: [],
       };
       state.users.push(newUser);
       localStorage.setItem(`${LOCAL_USERS}-${id}`, JSON.stringify(newUser));
     },
 
-    editUser: (state, action: PayloadAction<{ id: number; name: string }>) => {
-
-      const { id, name } = action.payload;
+    editUser: (
+      state,
+      action: PayloadAction<{
+        id: number;
+        name: string;
+        profilePic: string | null;
+        todos?: { id: number; text: string; completed: boolean }[];
+      }>
+    ) => {
+      const { id, name, profilePic, todos } = action.payload;
       const editUser = state.users.find((user) => user.id === id);
       if (editUser) {
         editUser.name = name;
+        editUser.profilePic = profilePic;
+        if (todos) {
+          editUser.todos = todos;
+        }
         localStorage.setItem(`${LOCAL_USERS}-${id}`, JSON.stringify(editUser));
       }
     },
 
     deleteUser: (state, action: PayloadAction<number>) => {
-
-      const updatedUsers = state.users.filter((user)=>user.id !==action.payload);
-      if(updatedUsers.length!==state.users.length)
-      {
-        state.users=updatedUsers;
+      const updatedUsers = state.users.filter((user) => user.id !== action.payload);
+      if (updatedUsers.length !== state.users.length) {
+        state.users = updatedUsers;
         localStorage.removeItem(`${LOCAL_USERS}-${action.payload}`);
       }
     },
-    
-    setProfilePic: (state, action: PayloadAction<{ id: number; profilePic: string }>) => {
 
+    setProfilePic: (state, action: PayloadAction<{ id: number; profilePic: string }>) => {
       const { id, profilePic } = action.payload;
       const setUserProfilePic = state.users.find((user) => user.id === id);
       if (setUserProfilePic) {

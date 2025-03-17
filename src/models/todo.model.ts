@@ -2,7 +2,7 @@ export interface TodoData {
   id: number;
   text: string;
   completed: boolean;
-  userId: number;
+  userId?: number;
 }
 
 export interface TodoStateModel {
