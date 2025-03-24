@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { UserData, UserStateModel } from 'models';
 import { LOCAL_USERS } from 'config/config';
+import { RootState } from 'store/todoStore';
 
 const loadUsersFromLocalStorage = (): UserData[] => {
   const users: UserData[] = [];
@@ -47,10 +48,13 @@ const userSlice = createSlice({
       }>
     ) => {
       const { id, name, profilePic, todos } = action.payload;
+
       const editUser = state.users.find((user) => user.id === id);
+
       if (editUser) {
         editUser.name = name;
         editUser.profilePic = profilePic;
+
         if (todos) {
           editUser.todos = todos;
         }
@@ -60,6 +64,7 @@ const userSlice = createSlice({
 
     deleteUser: (state, action: PayloadAction<number>) => {
       const updatedUsers = state.users.filter((user) => user.id !== action.payload);
+
       if (updatedUsers.length !== state.users.length) {
         state.users = updatedUsers;
         localStorage.removeItem(`${LOCAL_USERS}-${action.payload}`);
@@ -74,8 +79,22 @@ const userSlice = createSlice({
         localStorage.setItem(`${LOCAL_USERS}-${id}`, JSON.stringify(setUserProfilePic));
       }
     },
+    toggleCompleted: (state, action: PayloadAction<{ userId: number; todoId: number }>) => {
+      const { userId, todoId } = action.payload;
+
+      const currentUser = state.users.find((user) => user.id === userId);
+      if (currentUser) {
+        const curentTodo = currentUser.todos?.find((todo) => todo.id === todoId);
+        if (curentTodo) {
+          curentTodo.completed = !curentTodo.completed;
+          localStorage.setItem(`${LOCAL_USERS}-${userId}`, JSON.stringify(currentUser));
+        }
+      }
+    },
   },
 });
 
-export const { addUser, editUser, deleteUser, setProfilePic } = userSlice.actions;
+export const { addUser, editUser, deleteUser, setProfilePic, toggleCompleted } = userSlice.actions;
+
+export const selectUsers = (state: RootState) => state.users.users;
 export default userSlice.reducer;
