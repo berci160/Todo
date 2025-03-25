@@ -71,61 +71,59 @@ export const TodoModal = ({
       <div className="modal-content bg-lime-100 p-6 rounded-lg shadow-lg max-w-md w-full">
         <h2 className="text-xl font-semibold mb-4">{user.name}s Todos</h2>
         <div className="todos-list mb-4">
-          {todos?.map(({ id, text, completed }) => {
-            return (
-              <div key={id} className="todo-item flex justify-between items-center mb-2 p-2 border-b">
-                <div className="flex items-center">
-                  {editTodoId === id ? (
-                    <div className="flex items-center space-x-2">
-                      <input
-                        className="border p-2 rounded w-full"
-                        type="text"
-                        value={editTodoText || text}
-                        onChange={(e) => handleEditTodoText(e)}
-                      />
-                      <button
-                        className="bg-green-500 text-white px-4 py-2 rounded-lg mr-1"
-                        onClick={() => handleEditTodo(id, editTodoText || text)}
-                      >
-                        Save
-                      </button>
-                    </div>
-                  ) : (
-                    <div>
-                      <input
-                        type="checkbox"
-                        checked={completed}
-                        onChange={() => handleToggleCompleted(id, completed)}
-                        className="mr-2"
-                      />
-                      <span className={classNames({ 'line-through': completed })}>{text}</span>
-                    </div>
-                  )}
-                </div>
-                <div className="flex space-x-2">
-                  <button
-                    className="mr-1 bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600"
-                    onClick={() => setEditTodoId(id)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
-                    onClick={() => handleDeleteTodo(id)}
-                  >
-                    Delete
-                  </button>
-                </div>
+          {todos?.map(({ id, text, completed }) => (
+            <div key={id} className="todo-item flex justify-between items-center mb-2 p-2 border-b">
+              <div className="flex items-center">
+                {editTodoId === id ? (
+                  <div className="flex items-center space-x-2">
+                    <input
+                      className="border p-2 rounded w-full"
+                      type="text"
+                      value={editTodoText || text}
+                      onChange={handleEditTodoText}
+                    />
+                    <button
+                      className="bg-green-500 text-white px-4 py-2 rounded-lg mr-1"
+                      onClick={() => handleEditTodo(id, editTodoText || text)}
+                    >
+                      Save
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    <input
+                      type="checkbox"
+                      checked={completed}
+                      onChange={() => handleToggleCompleted(id, completed)}
+                      className="mr-2"
+                    />
+                    <span className={classNames({ 'line-through': completed })}>{text}</span>
+                  </div>
+                )}
               </div>
-            );
-          })}
+              <div className="flex space-x-2">
+                <button
+                  className="mr-1 bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600"
+                  onClick={() => setEditTodoId(id)}
+                >
+                  Edit
+                </button>
+                <button
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
+                  onClick={() => handleDeleteTodo(id)}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
 
         <div className="add-todo mb-4">
           <input
             type="text"
             value={newTodoText}
-            onChange={(e) => handleNewTodoText(e)}
+            onChange={handleNewTodoText}
             placeholder="Add new todo"
             className="border p-2 rounded w-full"
           />

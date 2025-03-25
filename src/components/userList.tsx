@@ -4,12 +4,12 @@ import { useDispatch } from 'react-redux';
 import { addUser, deleteUser, editUser } from 'slices/userSlice';
 import { UserData } from 'models';
 
-interface userListProps {
+interface UserListProps {
   users: UserData[];
   onUserSelect: (user: UserData) => void;
 }
 
-export const UserList = ({ users, onUserSelect }: userListProps) => {
+export const UserList = ({ users, onUserSelect }: UserListProps) => {
   const dispatch = useDispatch();
 
   const [newUserName, setNewUserName] = useState('');
@@ -68,7 +68,7 @@ export const UserList = ({ users, onUserSelect }: userListProps) => {
         <input
           type="text"
           value={newUserName}
-          onChange={(e) => handleUserNameChange(e)}
+          onChange={handleUserNameChange}
           className="border p-2 rounded-lg w1/2 mr-4 bg-yellow-50"
         />
         <button onClick={handleAddUser} className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
@@ -82,7 +82,7 @@ export const UserList = ({ users, onUserSelect }: userListProps) => {
             className="border p-2 rounded-lg w-1/2 mb-4"
             type="text"
             value={editUserName}
-            onChange={(e) => handleEditUserNameChange(e)}
+            onChange={handleEditUserNameChange}
           />
           <input className="mb-4" type="file" accept="image/*" onChange={handleProfilePicChange} />
           {editProfilePic && (

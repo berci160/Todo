@@ -30,13 +30,12 @@ export const Home = () => {
 
   const handleDeleteTodo = (todoId: number) => {
     if (selectedUser) {
-      const updatedTodos = selectedUser.todos?.filter((todo) => todo.id !== todoId);
+      const { todos = [] } = selectedUser;
 
+      const updatedTodos = todos.filter(({ id }) => id !== todoId);
+
+      setSelectedUser((prev) => ({ ...prev!, todos: updatedTodos }));
       dispatch(editUser({ ...selectedUser, todos: updatedTodos }));
-      setSelectedUser({
-        ...selectedUser,
-        todos: updatedTodos,
-      });
     }
   };
 
