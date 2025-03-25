@@ -3,7 +3,7 @@ export interface UserData {
   id: number;
   name: string;
   profilePic: string | null;
-  todos: TodoData[];
+  todos?: TodoData[];
 }
 
 export interface UserStateModel {
