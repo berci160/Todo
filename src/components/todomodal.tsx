@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import classNames from 'classnames';
 
 import { UserData } from 'models';
 
@@ -57,13 +58,20 @@ export const TodoModal = ({
     }
   };
 
+  const handleEditTodoText = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditTodoText(e.target.value);
+  };
+
+  const handleNewTodoText = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewTodoText(e.target.value);
+  };
+
   return (
     <div className="modal-overlay fixed inset-0 bg-yellow-50 flex justify-center items-center z-50">
       <div className="modal-content bg-lime-100 p-6 rounded-lg shadow-lg max-w-md w-full">
         <h2 className="text-xl font-semibold mb-4">{user.name}s Todos</h2>
         <div className="todos-list mb-4">
-          {todos?.map((todo) => {
-            const { id, text, completed } = todo;
+          {todos?.map(({ id, text, completed }) => {
             return (
               <div key={id} className="todo-item flex justify-between items-center mb-2 p-2 border-b">
                 <div className="flex items-center">
@@ -73,7 +81,7 @@ export const TodoModal = ({
                         className="border p-2 rounded w-full"
                         type="text"
                         value={editTodoText || text}
-                        onChange={(e) => setEditTodoText(e.target.value)}
+                        onChange={(e) => handleEditTodoText(e)}
                       />
                       <button
                         className="bg-green-500 text-white px-4 py-2 rounded-lg mr-1"
@@ -90,7 +98,7 @@ export const TodoModal = ({
                         onChange={() => handleToggleCompleted(id, completed)}
                         className="mr-2"
                       />
-                      <span className={completed ? 'line-through' : ''}>{text}</span>
+                      <span className={classNames({ 'line-through': completed })}>{text}</span>
                     </div>
                   )}
                 </div>
@@ -117,7 +125,7 @@ export const TodoModal = ({
           <input
             type="text"
             value={newTodoText}
-            onChange={(e) => setNewTodoText(e.target.value)}
+            onChange={(e) => handleNewTodoText(e)}
             placeholder="Add new todo"
             className="border p-2 rounded w-full"
           />
