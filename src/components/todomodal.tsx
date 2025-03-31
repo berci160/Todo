@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 
 import { UserData } from 'models';
 
@@ -26,6 +27,7 @@ export const TodoModal = ({
   const [editTodoId, setEditTodoId] = useState<number | null>(null);
   const [editTodoText, setEditTodoText] = useState<string>('');
   const [todos, setTodos] = useState(user.todos || []);
+  const { t } = useTranslation();
 
   useEffect(() => {
     setTodos(user.todos || []);
@@ -69,7 +71,7 @@ export const TodoModal = ({
   return (
     <div className="modal-overlay fixed inset-0 bg-yellow-50 flex justify-center items-center z-50">
       <div className="modal-content bg-lime-100 p-6 rounded-lg shadow-lg max-w-md w-full">
-        <h2 className="text-xl font-semibold mb-4">{user.name}s Todos</h2>
+        <h2 className="text-xl font-semibold mb-4">{t('todos', { name: user.name })}</h2>
         <div className="todos-list mb-4">
           {todos?.map(({ id, text, completed }) => (
             <div key={id} className="todo-item flex justify-between items-center mb-2 p-2 border-b">
@@ -86,7 +88,7 @@ export const TodoModal = ({
                       className="bg-green-500 text-white px-4 py-2 rounded-lg mr-1"
                       onClick={() => handleEditTodo(id, editTodoText || text)}
                     >
-                      Save
+                      {t('save_changes')}
                     </button>
                   </div>
                 ) : (
@@ -106,13 +108,13 @@ export const TodoModal = ({
                   className="mr-1 bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600"
                   onClick={() => setEditTodoId(id)}
                 >
-                  Edit
+                  {t('edit')}
                 </button>
                 <button
                   className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
                   onClick={() => handleDeleteTodo(id)}
                 >
-                  Delete
+                  {t('delete')}
                 </button>
               </div>
             </div>
@@ -128,13 +130,13 @@ export const TodoModal = ({
             className="border p-2 rounded w-full"
           />
           <button className="bg-blue-500 text-white px-4 py-2 rounded mt-4 w-full" onClick={handleAddTodo}>
-            Add Todo
+            {t('add_todo')}
           </button>
         </div>
 
         <div className="flex justify-end">
           <button className="text-white hover:bg-red-600 bg-red-500 rounded w-full px-4 py-2" onClick={onClose}>
-            Close
+            {t('back')}
           </button>
         </div>
       </div>
