@@ -136,6 +136,6 @@ const userSlice = createSlice({
 export const { editUser, deleteUser, setProfilePic, toggleCompleted, login, logout, registerUser } = userSlice.actions;
 
 export const selectUsers = (state: RootState) => state.users.users;
-export const isAuthenticated = (state:RootState)=>state.users.isAuthenticated;
-export const loggedInUser = (state:RootState)=> state.users.currentUser;
+export const selectIsAuthenticated = (state:RootState)=>state.users.isAuthenticated;
+export const selectLoggedInUser  = (state:RootState)=> state.users.currentUser;
 export default userSlice.reducer;

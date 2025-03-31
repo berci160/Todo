@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import bcrypt from 'bcryptjs';
 import { useState } from 'react';
 
-import { LOCAL_USERS, MIN_PASSWORD_CHAR } from 'config/config';
+import { LOCAL_USERS, MIN_PASSWORD_VALUE } from 'config/config';
 import { UserData } from 'models';
 import { login } from 'slices/userSlice';
 
@@ -22,7 +22,10 @@ const Login = () => {
   const schema = yup
     .object({
       username: yup.string().required(t('username_required')),
-      password: yup.string().min(MIN_PASSWORD_CHAR, t('password_min_char', { MIN_PASSWORD_CHAR })).required(t('password_required')),
+      password: yup
+        .string()
+        .min(MIN_PASSWORD_VALUE, t('password_min_char', { MIN_PASSWORD_VALUE }))
+        .required(t('password_required')),
     })
     .required();
 
@@ -36,23 +39,25 @@ const Login = () => {
 
   const onSubmit = (data: SignupProps) => {
     setError(null);
+
+    const { username, password } = data;
+
     const users: UserData[] = JSON.parse(localStorage.getItem(LOCAL_USERS) || '[]');
-    const user = users.find((u) => u.name === data.username);
+    const foundUser = users.find((u) => u.name === username);
 
-    if (user) {
-      if (user?.password) {
+    if (foundUser && foundUser.password) {
+      const { id, name, profilePic, password: hashedPassword } = foundUser;
 
-        const isPasswordCorrect = bcrypt.compareSync(data.password, user.password);
+      const isPasswordCorrect = bcrypt.compareSync(password, hashedPassword);
 
-        if (isPasswordCorrect) {
-          dispatch(login({ id: user.id, name: user.name, profilePic: user.profilePic }));
-          navigate('/home');
-        } else {
-          setError(t('bad_password'));
-        }
+      if (isPasswordCorrect) {
+        dispatch(login({ id, name, profilePic }));
+        navigate('/home');
       } else {
-        setError(t('bad_username'));
+        setError(t('bad_password'));
       }
+    } else {
+      setError(t('bad_username'));
     }
   };
 

@@ -2,16 +2,16 @@ import { ElementType, FC } from 'react';
 import { Navigate } from 'react-router';
 import { useSelector } from 'react-redux';
 
-import { isAuthenticated } from 'slices/userSlice';
+import { selectIsAuthenticated } from 'slices/userSlice';
 
 interface ProtectedRouteProps {
   element: ElementType;
 }
 
 export const ProtectedRoute: FC<ProtectedRouteProps> = ({ element: Element, ...props }) => {
-  const Authenticated = useSelector(isAuthenticated);
+  const isAuthenticated = useSelector(selectIsAuthenticated);
 
-  if (!Authenticated) {
+  if (!isAuthenticated) {
     return <Navigate to="/" />;
   }
 

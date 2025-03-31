@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useMemo , useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
-import { deleteUser, editUser, loggedInUser, logout, selectUsers } from 'slices/userSlice';
+import { deleteUser, editUser, logout , selectLoggedInUser, selectUsers } from 'slices/userSlice';
 import { AuthRoles, UserData } from 'models';
+
 
 interface UserListProps {
   users: UserData[];
@@ -14,22 +15,19 @@ export const UserList = ({ onUserSelect }: UserListProps) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  const currentUser = useSelector(loggedInUser);
+  const currentUser = useSelector(selectLoggedInUser );
   const users = useSelector(selectUsers);
 
   const [editUserId, setEditUserId] = useState<number | null>(null);
   const [editUserName, setEditUserName] = useState('');
-  const [editProfilePic, setEditProfilePic] = useState<string>('');
+  const [editProfilePic, setEditProfilePic] = useState('');
 
-  const filteredUsers = (() => {
+  const filteredUsers = useMemo(()=>{
     const isAdmin = currentUser?.role === AuthRoles.ADMIN;
-    if (isAdmin) {
-      return users;
-    } else {
-      return users.filter((user) => user.id === currentUser?.id);
-    }
-  })();
-
+  
+    return isAdmin?users:users.filter(({id})=>id===currentUser?.id);
+  },[currentUser?.id, currentUser?.role, users]);
+  
   const handleEditUser = () => {
     if (editUserId !== null && editUserName.trim()) {
       dispatch(editUser({ id: editUserId, name: editUserName, profilePic: editProfilePic }));
