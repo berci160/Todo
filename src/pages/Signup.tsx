@@ -4,12 +4,18 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router';
 import * as yup from 'yup';
-import bycrypt from 'bcryptjs'
-import { useDispatch,} from 'react-redux';
+import bycrypt from 'bcryptjs';
+import { useDispatch } from 'react-redux';
 
-import { LOCAL_USERS } from 'config/config';
+import { LOCAL_USERS, MIN_PASSWORD_CHAR } from 'config/config';
 import { UserData } from 'models';
 import { registerUser } from 'slices/userSlice';
+
+
+export interface SignupProps {
+  username: string;
+  password: string;
+}
 
 const Signup = () => {
   const [error, setError] = useState<string | null>(null);
@@ -18,11 +24,15 @@ const Signup = () => {
 
   const navigate = useNavigate();
 
+  const PASSWORD_SALT_LENGHT = 2;
+
   const schema = yup
     .object({
       username: yup.string().required(t('username_required')),
-      password: yup.string().min(6, t('password_min_char')).required(t('password_required')),
-      email: yup.string().email(t('invalid_email')).required(t('email_required')),
+      password: yup
+        .string()
+        .min(MIN_PASSWORD_CHAR, t('password_min_char', { MIN_PASSWORD_CHAR }))
+        .required(t('password_required')),
     })
     .required();
 
@@ -30,39 +40,34 @@ const Signup = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({ resolver: yupResolver(schema) });
+  } = useForm<SignupProps>({ resolver: yupResolver(schema) });
 
- 
-
- 
-
-  const onSubmit = (data: { username: string; email: string; password: string }) => {
+  const onSubmit = (data: SignupProps) => {
     setError(null);
 
-    const users = JSON.parse(localStorage.getItem(LOCAL_USERS) || '[]')
-    const existingUser = users.find((user:UserData) =>user.name===data.username)
-    if(existingUser)
-    {
-      setError(t('user_exist'))
+    const users:UserData[] = JSON.parse(localStorage.getItem(LOCAL_USERS) || '[]');
+    const existingUser = users.find((user) => user.name === data.username);
+    if (existingUser) {
+      setError(t('user_exist'));
       return;
     }
 
-    const hashedPassword = bycrypt.hashSync(data.password,2);
+    const hashedPassword = bycrypt.hashSync(data.password, PASSWORD_SALT_LENGHT);
 
-    const newUser = 
-    {
-      id:new Date().getTime(),
-      name:data.username,
-      password:hashedPassword,
-      profilePic:null,
-      todos:[]
-    }
+    const newUser = {
+      id: new Date().getTime(),
+      name: data.username,
+      password: hashedPassword,
+      profilePic: null,
+      todos: [],
+    };
 
     users.push(newUser);
-    dispatch(registerUser({ id: newUser.id, name: newUser.name, profilePic: newUser.profilePic, password: hashedPassword }));
+    dispatch(
+      registerUser({ id: newUser.id, name: newUser.name, profilePic: newUser.profilePic, password: hashedPassword })
+    );
 
-    navigate('/')
-   
+    navigate('/');
   };
 
   return (
@@ -83,18 +88,6 @@ const Signup = () => {
                 {...register('username')}
               />
               {errors.username && <span className="text-red-500 text-sm">{errors.username.message}</span>}
-            </div>
-            <div>
-              <label htmlFor="email" className='block text-sm font-medium text-gray-700"'>
-                {t('email')}
-              </label>
-              <input
-                type="email"
-                id="email"
-                className="mt-1 p-3 w-full border border-gray-300 rounded-md bg-gray-500"
-                {...register('email')}
-              />
-              {errors.email && <span className="text-red-500 text-sm">{errors.email.message}</span>}
             </div>
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">

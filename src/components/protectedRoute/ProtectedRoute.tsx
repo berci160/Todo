@@ -1,18 +1,19 @@
-import React from 'react';
+import { ElementType, FC } from 'react';
 import { Navigate } from 'react-router';
-import { useSelector, } from 'react-redux';
+import { useSelector } from 'react-redux';
 
-import { RootState } from 'store/todoStore';
+import { isAuthenticated } from 'slices/userSlice';
+
 interface ProtectedRouteProps {
-  element: React.ElementType;
+  element: ElementType;
 }
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element: Element, ...rest }) => {
-    const isAuthenticated = useSelector((state: RootState) => state.users.isAuthenticated);
+export const ProtectedRoute: FC<ProtectedRouteProps> = ({ element: Element, ...props }) => {
+  const Authenticated = useSelector(isAuthenticated);
 
-  if (!isAuthenticated) {
+  if (!Authenticated) {
     return <Navigate to="/" />;
   }
 
-  return <Element {...rest} />;
+  return <Element {...props} />;
 };

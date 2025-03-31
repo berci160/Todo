@@ -7,9 +7,11 @@ import { useDispatch } from 'react-redux';
 import bcrypt from 'bcryptjs';
 import { useState } from 'react';
 
-import { LOCAL_USERS } from 'config/config';
-import {  UserData } from 'models';
+import { LOCAL_USERS, MIN_PASSWORD_CHAR } from 'config/config';
+import { UserData } from 'models';
 import { login } from 'slices/userSlice';
+
+import { SignupProps } from './Signup';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -20,7 +22,7 @@ const Login = () => {
   const schema = yup
     .object({
       username: yup.string().required(t('username_required')),
-      password: yup.string().min(6, t('password_min_char')).required(t('password_required')),
+      password: yup.string().min(MIN_PASSWORD_CHAR, t('password_min_char', { MIN_PASSWORD_CHAR })).required(t('password_required')),
     })
     .required();
 
@@ -28,25 +30,29 @@ const Login = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<SignupProps>({
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data: { username: string; password: string }) => {
-    setError(null)
-    const users = JSON.parse(localStorage.getItem(LOCAL_USERS) || '[]');
-    const user = users.find((u: UserData) => u.name === data.username);
+  const onSubmit = (data: SignupProps) => {
+    setError(null);
+    const users: UserData[] = JSON.parse(localStorage.getItem(LOCAL_USERS) || '[]');
+    const user = users.find((u) => u.name === data.username);
 
     if (user) {
-      const isPasswordCorrect = bcrypt.compareSync(data.password, user.password);
-      if (isPasswordCorrect) {
-        dispatch(login({ id: user.id, name: user.name, profilePic: user.profilePic }));
-        navigate('/home');
+      if (user?.password) {
+
+        const isPasswordCorrect = bcrypt.compareSync(data.password, user.password);
+
+        if (isPasswordCorrect) {
+          dispatch(login({ id: user.id, name: user.name, profilePic: user.profilePic }));
+          navigate('/home');
+        } else {
+          setError(t('bad_password'));
+        }
       } else {
-        setError(t('bad_password'))
+        setError(t('bad_username'));
       }
-    } else {
-      setError(t('bad_username'))
     }
   };
 

@@ -1,8 +1,8 @@
 import { TodoData } from './todo.model';
 
 export enum AuthRoles {
-  admin = 'admin',
-  user = 'user',
+  ADMIN = 'admin',
+  USER = 'user',
 }
 
 export interface UserData {
@@ -11,7 +11,7 @@ export interface UserData {
   profilePic: string | null;
   todos?: TodoData[];
   password?: string;
-  role?: AuthRoles.admin | AuthRoles.user;
+  role?: AuthRoles
 }
 
 export interface UserStateModel {

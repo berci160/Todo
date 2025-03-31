@@ -7,7 +7,7 @@
   "username_required": "Username is required",
   "password_required": "Password is required",
   "email_required": "Email is required",
-  "password_min_char": "Password must be at least 6 characters",
+  "password_min_char": "Password must be at least {{MIN_PASSWORD_CHAR}} characters",
   "sign_up_first": "Sign in if you have an account",
   "register_first": "Register an account",
   "fill_up_all": "Please fill all fields",

@@ -118,7 +118,7 @@ const userSlice = createSlice({
         profilePic: null,
         todos: [],
         password,
-        role: AuthRoles.user,
+        role: AuthRoles.USER,
       };
 
       state.users.push(newUser);
@@ -136,4 +136,6 @@ const userSlice = createSlice({
 export const { editUser, deleteUser, setProfilePic, toggleCompleted, login, logout, registerUser } = userSlice.actions;
 
 export const selectUsers = (state: RootState) => state.users.users;
+export const isAuthenticated = (state:RootState)=>state.users.isAuthenticated;
+export const loggedInUser = (state:RootState)=> state.users.currentUser;
 export default userSlice.reducer;

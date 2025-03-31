@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
-import { RootState } from 'store/todoStore';
-import { deleteUser, editUser, logout } from 'slices/userSlice';
+import { deleteUser, editUser, loggedInUser, logout, selectUsers } from 'slices/userSlice';
 import { AuthRoles, UserData } from 'models';
 
 interface UserListProps {
@@ -13,17 +12,23 @@ interface UserListProps {
 
 export const UserList = ({ onUserSelect }: UserListProps) => {
   const dispatch = useDispatch();
-  const {t} = useTranslation()
+  const { t } = useTranslation();
 
-  const currentUser = useSelector((state: RootState) => state.users.currentUser);
-  const users = useSelector((state: RootState) => state.users.users);
+  const currentUser = useSelector(loggedInUser);
+  const users = useSelector(selectUsers);
 
   const [editUserId, setEditUserId] = useState<number | null>(null);
   const [editUserName, setEditUserName] = useState('');
   const [editProfilePic, setEditProfilePic] = useState<string>('');
 
-  const filteredUsers =
-    currentUser?.role === AuthRoles.admin ? users : users.filter((user) => user.id === currentUser?.id);
+  const filteredUsers = (() => {
+    const isAdmin = currentUser?.role === AuthRoles.ADMIN;
+    if (isAdmin) {
+      return users;
+    } else {
+      return users.filter((user) => user.id === currentUser?.id);
+    }
+  })();
 
   const handleEditUser = () => {
     if (editUserId !== null && editUserName.trim()) {
@@ -77,7 +82,7 @@ export const UserList = ({ onUserSelect }: UserListProps) => {
             <img className="w-24 h-24 rounded-full mb-4" src={editProfilePic} width={100} height={100} />
           )}
           <button className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600" onClick={handleEditUser}>
-           {t('save_changes')}
+            {t('save_changes')}
           </button>
         </div>
       )}
@@ -104,24 +109,21 @@ export const UserList = ({ onUserSelect }: UserListProps) => {
                   setEditUserName(name);
                 }}
               >
-                  {t('edit')}
+                {t('edit')}
               </button>
 
               <button
                 className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
                 onClick={() => handleDeleteUser(id)}
               >
-                   {t('delete')}
+                {t('delete')}
               </button>
             </div>
           </div>
         ))}
       </div>
-      <button
-        className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-        onClick={() => handleLogoutUser()}
-      >
-           {t('logout')}
+      <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600" onClick={handleLogoutUser}>
+        {t('logout')}
       </button>
     </div>
   );
