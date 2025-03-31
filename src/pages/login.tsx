@@ -24,7 +24,7 @@ const Login = () => {
       username: yup.string().required(t('username_required')),
       password: yup
         .string()
-        .min(MIN_PASSWORD_VALUE, t('password_min_char', { MIN_PASSWORD_VALUE }))
+        .min(MIN_PASSWORD_VALUE, t('password_min_char', {min: MIN_PASSWORD_VALUE }))
         .required(t('password_required')),
     })
     .required();
@@ -43,7 +43,7 @@ const Login = () => {
     const { username, password } = data;
 
     const users: UserData[] = JSON.parse(localStorage.getItem(LOCAL_USERS) || '[]');
-    const foundUser = users.find((u) => u.name === username);
+    const foundUser = users.find((user) => user.name === username);
 
     if (foundUser && foundUser.password) {
       const { id, name, profilePic, password: hashedPassword } = foundUser;

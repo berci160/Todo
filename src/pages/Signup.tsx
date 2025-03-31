@@ -31,7 +31,7 @@ const Signup = () => {
       username: yup.string().required(t('username_required')),
       password: yup
         .string()
-        .min(MIN_PASSWORD_VALUE, t('password_min_char', { MIN_PASSWORD_VALUE }))
+        .min(MIN_PASSWORD_VALUE, t('password_min_char', {min: MIN_PASSWORD_VALUE }))
         .required(t('password_required')),
     })
     .required();
