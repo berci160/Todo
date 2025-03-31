@@ -11,7 +11,6 @@ import { LOCAL_USERS, MIN_PASSWORD_VALUE } from 'config/config';
 import { UserData } from 'models';
 import { registerUser } from 'slices/userSlice';
 
-
 export interface SignupProps {
   username: string;
   password: string;
@@ -31,7 +30,7 @@ const Signup = () => {
       username: yup.string().required(t('username_required')),
       password: yup
         .string()
-        .min(MIN_PASSWORD_VALUE, t('password_min_char', {min: MIN_PASSWORD_VALUE }))
+        .min(MIN_PASSWORD_VALUE, t('password_min_char', { min: MIN_PASSWORD_VALUE }))
         .required(t('password_required')),
     })
     .required();
@@ -42,12 +41,10 @@ const Signup = () => {
     formState: { errors },
   } = useForm<SignupProps>({ resolver: yupResolver(schema) });
 
-  const onSubmit = (data: SignupProps) => {
+  const onSubmit = ({ password, username }: SignupProps) => {
     setError(null);
 
-    const {username,password} = data;
-
-    const users:UserData[] = JSON.parse(localStorage.getItem(LOCAL_USERS) || '[]');
+    const users: UserData[] = JSON.parse(localStorage.getItem(LOCAL_USERS) || '[]');
     const existingUser = users.find((user) => user.name === username);
 
     if (existingUser) {
@@ -67,11 +64,9 @@ const Signup = () => {
 
     users.push(newUser);
 
-    const {id,name,profilePic} = newUser;
+    const { id, name, profilePic } = newUser;
 
-    dispatch(
-      registerUser({ id, name, profilePic, password: hashedPassword })
-    );
+    dispatch(registerUser({ id, name, profilePic, password: hashedPassword }));
 
     navigate('/');
   };
