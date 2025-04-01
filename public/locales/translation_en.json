@@ -29,5 +29,10 @@
   "edit": "Edit",
   "delete": "Delete",
   "todos": "{{name}}s todo",
-  "add_todo": "Add Todo"
+  "add_todo": "Add Todo",
+  "activity_log": "Activity Log",
+  "no_activity_log": "There are no logs, in the Activity logger",
+  "event":"Event",
+  "date":"Date",
+  "delete_logger":"Delete Activity logs"
 }

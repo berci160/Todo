@@ -1,10 +1,10 @@
-import React, { useMemo , useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { Link} from 'react-router';
 
-import { deleteUser, editUser, logout , selectLoggedInUser, selectUsers } from 'slices/userSlice';
+import { deleteUser, editUser, logout, selectLoggedInUser, selectUsers } from 'slices/userSlice';
 import { AuthRoles, UserData } from 'models';
-
 
 interface UserListProps {
   users: UserData[];
@@ -15,19 +15,19 @@ export const UserList = ({ onUserSelect }: UserListProps) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  const currentUser = useSelector(selectLoggedInUser );
+  const currentUser = useSelector(selectLoggedInUser);
   const users = useSelector(selectUsers);
 
   const [editUserId, setEditUserId] = useState<number | null>(null);
   const [editUserName, setEditUserName] = useState('');
   const [editProfilePic, setEditProfilePic] = useState('');
 
-  const filteredUsers = useMemo(()=>{
-    const isAdmin = currentUser?.role === AuthRoles.ADMIN;
-  
-    return isAdmin?users:users.filter(({id})=>id===currentUser?.id);
-  },[currentUser?.id, currentUser?.role, users]);
-  
+  const isAdmin = currentUser?.role === AuthRoles.ADMIN;
+
+  const filteredUsers = useMemo(() => {
+    return isAdmin ? users : users.filter(({ id }) => id === currentUser?.id);
+  }, [currentUser?.id, currentUser?.role, users]);
+
   const handleEditUser = () => {
     if (editUserId !== null && editUserName.trim()) {
       dispatch(editUser({ id: editUserId, name: editUserName, profilePic: editProfilePic }));
@@ -99,9 +99,9 @@ export const UserList = ({ onUserSelect }: UserListProps) => {
                 {name}
               </span>
             </div>
-            <div className="flex space-x-2">
+            <div className="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0">
               <button
-                className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600"
+                className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600  w-full sm:w-auto"
                 onClick={() => {
                   setEditUserId(id);
                   setEditUserName(name);
@@ -111,7 +111,7 @@ export const UserList = ({ onUserSelect }: UserListProps) => {
               </button>
 
               <button
-                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 w-full sm:w-auto"
                 onClick={() => handleDeleteUser(id)}
               >
                 {t('delete')}
@@ -120,9 +120,20 @@ export const UserList = ({ onUserSelect }: UserListProps) => {
           </div>
         ))}
       </div>
-      <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600" onClick={handleLogoutUser}>
+      <button
+        className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex-initial"
+        onClick={handleLogoutUser}
+      >
         {t('logout')}
       </button>
+
+      {isAdmin && (
+        <div className="mb-4 p-5 flex-initial">
+          <Link to="/activityLog" className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+          {t('activity_log')}
+          </Link>
+        </div>
+      )}
     </div>
   );
 };

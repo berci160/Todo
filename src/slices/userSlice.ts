@@ -48,7 +48,6 @@ const userSlice = createSlice({
 
       if (updatedUsers.length !== state.users.length) {
         state.users = updatedUsers;
-        localStorage.setItem(LOCAL_USERS, JSON.stringify(state.users));
       }
     },
 
@@ -85,7 +84,7 @@ const userSlice = createSlice({
     ) => {
       const { name } = action.payload;
       const founduser = state.users.find((user) => user.name === name);
-      
+
       if (founduser) {
         state.currentUser = {
           id: founduser.id,
@@ -103,7 +102,6 @@ const userSlice = createSlice({
     logout: (state) => {
       state.currentUser = null;
       state.isAuthenticated = false;
-      localStorage.removeItem(CURRENT_USER);
     },
 
     registerUser: (
@@ -136,6 +134,6 @@ const userSlice = createSlice({
 export const { editUser, deleteUser, setProfilePic, toggleCompleted, login, logout, registerUser } = userSlice.actions;
 
 export const selectUsers = (state: RootState) => state.users.users;
-export const selectIsAuthenticated = (state:RootState)=>state.users.isAuthenticated;
-export const selectLoggedInUser  = (state:RootState)=> state.users.currentUser;
+export const selectIsAuthenticated = (state: RootState) => state.users.isAuthenticated;
+export const selectLoggedInUser = (state: RootState) => state.users.currentUser;
 export default userSlice.reducer;

@@ -27,6 +27,11 @@
   "edit":"Módosítás",
   "delete":"Törlés",
   "todos": "{{name}} todoi",
-  "add_todo":"Todo hozzáadása"
+  "add_todo":"Todo hozzáadása",
+  "activity_log": "Tevékenység napló",
+  "no_activity_log": "A tevékenységi napló üres",
+  "event":"Esemény",
+  "date":"Időpont",
+  "delete_logger":"Tevékenységi napló bejegyzéseinek törlése"
 
 }
