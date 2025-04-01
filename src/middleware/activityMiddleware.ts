@@ -25,18 +25,19 @@ const userActivityMiddleware = ((store) => (next) => (action) => {
   const result = next(typedAction);
   const currentUser = selectLoggedInUser(store.getState());
 
-  if (typedAction.type === registerUser.type) {
+  const handleCreateLog = (activityType: ActivityType, name: string) => {
     logActivity({
-      type: ActivityType.CREATE,
-      userName: typedAction.payload.name,
+      type: activityType,
+      userName: name,
     });
+  };
+
+  if (typedAction.type === registerUser.type) {
+    handleCreateLog(ActivityType.CREATE, typedAction.payload.name);
   }
 
   if (typedAction.type === login.type) {
-    logActivity({
-      type: ActivityType.LOGIN,
-      userName: typedAction.payload.name,
-    });
+    handleCreateLog(ActivityType.LOGIN, typedAction.payload.name);
   }
 
   if (typedAction.type === logout.type) {
@@ -44,23 +45,19 @@ const userActivityMiddleware = ((store) => (next) => (action) => {
     if (currentUserBefore) {
       const currentUserParsed = JSON.parse(currentUserBefore);
 
-      logActivity({
-        type: ActivityType.LOGOUT,
-        userName: currentUserParsed.name,
-      });
+      handleCreateLog(ActivityType.LOGOUT, currentUserParsed.name);
+
       localStorage.removeItem(CURRENT_USER);
     }
   }
 
   if (typedAction.type === editUser.type) {
-    logActivity({
-      type: ActivityType.EDIT,
-      userName: typedAction.payload.name,
-    });
+    handleCreateLog(ActivityType.EDIT, typedAction.payload.name);
   }
 
   if (typedAction.type === deleteUser.type) {
     const users = localStorage.getItem(LOCAL_USERS);
+
     if (users) {
       const parsedUsers = JSON.parse(users);
       const user = parsedUsers.find(
@@ -68,10 +65,7 @@ const userActivityMiddleware = ((store) => (next) => (action) => {
       );
 
       if (user) {
-        logActivity({
-          type: ActivityType.DELETE,
-          userName: user.name,
-        });
+        handleCreateLog(ActivityType.DELETE, user.name);
       }
 
       const updatedUsers = parsedUsers.filter((deletedUser: { id: number }) => deletedUser.id !== typedAction.payload);
@@ -81,12 +75,9 @@ const userActivityMiddleware = ((store) => (next) => (action) => {
   }
 
   if (typedAction.type === toggleCompleted.type && currentUser) {
-    logActivity({
-      type: ActivityType.COMPLETE,
-      userName: currentUser.name,
-    });
+    handleCreateLog(ActivityType.COMPLETE, currentUser.name);
   }
-  
+
   return result;
 }) as Middleware;
 

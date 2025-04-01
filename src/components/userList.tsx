@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { Link} from 'react-router';
+import { Link } from 'react-router';
 
 import { deleteUser, editUser, logout, selectLoggedInUser, selectUsers } from 'slices/userSlice';
 import { AuthRoles, UserData } from 'models';
@@ -24,8 +24,12 @@ export const UserList = ({ onUserSelect }: UserListProps) => {
 
   const isAdmin = currentUser?.role === AuthRoles.ADMIN;
 
+  const filterUsers = (currentUserId?: number): UserData[] => {
+    return users.filter(({ id }) => id === currentUserId);
+  };
+
   const filteredUsers = useMemo(() => {
-    return isAdmin ? users : users.filter(({ id }) => id === currentUser?.id);
+    return isAdmin ? users : filterUsers(currentUser?.id);
   }, [currentUser?.id, currentUser?.role, users]);
 
   const handleEditUser = () => {
@@ -55,6 +59,12 @@ export const UserList = ({ onUserSelect }: UserListProps) => {
 
   const handleDeleteUser = (id: number) => {
     dispatch(deleteUser(id));
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const deleteUserid = e.currentTarget.getAttribute('data-id');
+    const id = Number(deleteUserid);
+    handleDeleteUser(id);
   };
 
   const handleEditUserNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,8 +121,9 @@ export const UserList = ({ onUserSelect }: UserListProps) => {
               </button>
 
               <button
+                data-id={id}
                 className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 w-full sm:w-auto"
-                onClick={() => handleDeleteUser(id)}
+                onClick={handleDeleteClick}
               >
                 {t('delete')}
               </button>
@@ -130,7 +141,7 @@ export const UserList = ({ onUserSelect }: UserListProps) => {
       {isAdmin && (
         <div className="mb-4 p-5 flex-initial">
           <Link to="/activityLog" className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
-          {t('activity_log')}
+            {t('activity_log')}
           </Link>
         </div>
       )}
